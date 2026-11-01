@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql-db:
+    image: mysql:8.0
+    container_name: campusconnect-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: campusconnect
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: campususer
+      MYSQL_PASSWORD: campuspassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./database/sample-data.sql:/docker-entrypoint-initdb.d/2-sample-data.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - campusconnect-network
+
+  # Java Spring Boot Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: campusconnect-backend
+    restart: always
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/campusconnect?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: campususer
+      SPRING_DATASOURCE_PASSWORD: campuspassword
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - campusconnect-network
+
+  # React Frontend Service (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: campusconnect-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - campusconnect-network
+
+volumes:
+  mysql_data:
+
+networks:
+  campusconnect-network:
+    driver: bridge

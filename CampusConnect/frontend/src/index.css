@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F8F4F1;
+    color: #30303C;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* Custom scrollbar in Lavender & Coral theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F4F1;
+}
+::-webkit-scrollbar-thumb {
+  background: #B9A1D8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7352A3;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(185, 161, 216, 0.25);
+}
+
+.gradient-editorial {
+  background: linear-gradient(135deg, #7352A3 0%, #906DC7 50%, #FF897C 100%);
+}
+
+.coral-badge {
+  background: rgba(255, 137, 124, 0.15);
+  color: #E66355;
+  border: 1px solid rgba(255, 137, 124, 0.3);
+}
+
+.violet-badge {
+  background: rgba(115, 82, 163, 0.12);
+  color: #7352A3;
+  border: 1px solid rgba(185, 161, 216, 0.4);
+}
